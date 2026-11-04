@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Control | BioSack3R</title>
+  
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <div class="dashboard-layout">
+    
+    <!-- BARRA LATERAL (SIDEBAR) -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img src="assets/biosack.png" alt="BioSack3R Logo" class="brand-logo">
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul>
+          <!-- Accesible para TODOS -->
+          <li>
+            <button class="nav-btn active" data-target="sec-mis-ordenes">
+              <span class="icon">📦</span> Mis Órdenes
+            </button>
+          </li>
+
+          <!-- Exclusivo / Prioritario para COMERCIAL (También visible para Admin) -->
+          <li>
+            <button class="nav-btn" data-target="sec-nueva-orden">
+              <span class="icon">➕</span> Nueva Orden
+            </button>
+          </li>
+
+          <li>
+            <button class="nav-btn" data-target="sec-devoluciones">
+              <span class="icon">📑</span> Solicitud Devolución/NC
+            </button>
+          </li>
+
+          <!-- Exclusivo para ADMINISTRATIVOS (ADMIN) -->
+          <li class="admin-only" hidden>
+            <button class="nav-btn" data-target="sec-todas-ordenes">
+              <span class="icon">📊</span> Gestión Global de Órdenes
+            </button>
+          </li>
+
+          <li class="admin-only" hidden>
+            <button class="nav-btn" data-target="sec-gestion-devoluciones">
+              <span class="icon">🔔</span> Aprobación Devoluciones
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <strong id="userNombre">Cargando...</strong>
+          <span id="userRolBadge" class="badge">--</span>
+        </div>
+        <button id="btnLogout" class="btn-logout">Cerrar Sesión</button>
+      </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+      
+      <!-- SECCIÓN 1: MIS ÓRDENES (Vista para Comercial) -->
+      <section id="sec-mis-ordenes" class="content-section active">
+        <header class="section-header">
+          <h2>Mis Órdenes de Producción</h2>
+          <p>Consulta el avance y estado de tus órdenes registradas.</p>
+        </header>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID Orden</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Producto / Cantidad</th>
+                <th>Adjunto</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tablaMisOrdenes">
+              <tr>
+                <td colspan="6" class="text-center">Cargando datos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 2: NUEVA ORDEN DE PRODUCCIÓN -->
+      <section id="sec-nueva-orden" class="content-section">
+        <header class="section-header">
+          <h2>Crear Orden de Producción</h2>
+          <p>Ingresa los detalles y adjunta la ficha técnica/arte en PDF.</p>
+        </header>
+
+        <form id="formNuevaOrden" class="form-card">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="ordenCliente">Cliente *</label>
+              <input type="text" id="ordenCliente" required placeholder="Nombre o Razón Social">
+            </div>
+
+            <div class="form-group">
+              <label for="ordenProducto">Especificación del Producto *</label>
+              <input type="text" id="ordenProducto" required placeholder="Ej: Saco Laminado 70g Impreso">
+            </div>
+
+            <div class="form-group">
+              <label for="ordenCantidad">Cantidad Requerida (Unidades) *</label>
+              <input type="number" id="ordenCantidad" min="1" required placeholder="Ej: 5000">
+            </div>
+
+            <div class="form-group">
+              <label for="ordenPdf">Ficha Técnica / Arte (PDF Max 10MB) *</label>
+              <input type="file" id="ordenPdf" accept="application/pdf" required>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="ordenObservaciones">Observaciones Adicionales</label>
+            <textarea id="ordenObservaciones" rows="3" placeholder="Detalles de empaque, color o entrega..."></textarea>
+          </div>
+
+          <button type="submit" id="btnGuardarOrden" class="btn-primary">Guardar y Enviar Orden</button>
+        </form>
+      </section>
+
+      <!-- SECCIÓN 3: SOLICITUD DE DEVOLUCIÓN / NOTA CRÉDITO -->
+      <section id="sec-devoluciones" class="content-section">
+        <header class="section-header">
+          <h2>Solicitud de Devolución o Nota Crédito</h2>
+          <p>Registra inconsistencias en entregas o reclamos de clientes.</p>
+        </header>
+
+        <form id="formDevolucion" class="form-card">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="devTipo">Tipo de Solicitud *</label>
+              <select id="devTipo" required>
+                <option value="">Seleccione...</option>
+                <option value="Devolución">Devolución de Producto</option>
+                <option value="Nota Crédito">Nota Crédito</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="devNumOrden">Número de Orden / Factura *</label>
+              <input type="text" id="devNumOrden" required placeholder="Ej: OP-1045">
+            </div>
+
+            <div class="form-group">
+              <label for="devMonto">Monto / Valor Estimado ($)</label>
+              <input type="number" id="devMonto" placeholder="0.00">
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="devMotivo">Motivo Detallado *</label>
+            <textarea id="devMotivo" rows="4" required placeholder="Explique las razones de la solicitud..."></textarea>
+          </div>
+
+          <button type="submit" id="btnGuardarDev" class="btn-primary">Enviar Solicitud</button>
+        </form>
+      </section>
+
+      <!-- SECCIÓN 4: VISTA ADMINISTRATIVA GLOBAL (Solo ADMIN) -->
+      <section id="sec-todas-ordenes" class="content-section">
+        <header class="section-header">
+          <h2>Gestión Global de Órdenes de Producción</h2>
+          <p>Control de estado y asignación para producción.</p>
+        </header>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Comercial</th>
+                <th>Cliente</th>
+                <th>Detalle</th>
+                <th>Cant.</th>
+                <th>PDF</th>
+                <th>Estado</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tablaTodasOrdenes">
+              <tr>
+                <td colspan="8" class="text-center">Cargando catálogo completo...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 5: APROBACIÓN DE DEVOLUCIONES (Solo ADMIN) -->
+      <section id="sec-gestion-devoluciones" class="content-section">
+        <header class="section-header">
+          <h2>Revisión de Solicitudes y Notas Crédito</h2>
+          <p>Aprobación o rechazo de solicitudes recibidas.</p>
+        </header>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Solicitante</th>
+                <th>Tipo</th>
+                <th>Orden/Factura</th>
+                <th>Motivo</th>
+                <th>Estado</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tablaAdminDevoluciones">
+              <tr>
+                <td colspan="8" class="text-center">Cargando solicitudes...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
